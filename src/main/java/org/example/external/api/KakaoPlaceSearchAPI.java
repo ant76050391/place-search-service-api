@@ -34,7 +34,7 @@ public class KakaoPlaceSearchAPI {
   private boolean dryRun = false;
   @Value("${spring.profiles.active}")
   private String activeProfile;
-  @Value("${external.services.kakao.search-keyword-api-endpoint}")
+  @Value("${external.services.kakao.api-endpoint}")
   private String baseUrl;
 
   @Value("${external.services.kakao.authorization}")
@@ -58,7 +58,7 @@ public class KakaoPlaceSearchAPI {
     return webClient.get()
         .uri(baseUrl, uriBuilder -> uriBuilder
             .path("/v2/local/search/keyword.json")
-            .queryParam("query", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .queryParam("query", query)
             .queryParam("page", 1)
             .queryParam("size", 10)
             .build())

@@ -85,10 +85,10 @@ place:
 external:
   services:
     kakao:
-      search-keyword-api-endpoint: https://dapi.kakao.com/v2/local/search/keyword.json
+      api-endpoint: https://dapi.kakao.com
       authorization: KakaoAK d5d67031cf4ef994c4436b72aa97723e
     naver:
-      search-keyword-api-endpoint: https://openapi.naver.com/v1/search/local.json
+      api-endpoint: https://openapi.naver.com
       x-naver-client-id: 2NDO9UkEvTIky4dXWWhP
       x-naver-client-secret: PMXXzmD6Kf
 ---

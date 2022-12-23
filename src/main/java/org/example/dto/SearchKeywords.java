@@ -8,8 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
-import java.util.List;
-
 @Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
@@ -17,7 +15,7 @@ import java.util.List;
 @ConstructorBinding
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PlaceSearchKeywordRankResult {
-  private int total;
-  private List<SearchKeywords> searchKeywords;
+public class SearchKeywords {
+  private String keyword;
+  private Long count;
 }

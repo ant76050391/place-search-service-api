@@ -38,8 +38,8 @@ public class Router {
   @Bean
   public RouterFunction<?> placesRouters() {
     return route().path("/v1", builder -> builder
-            .GET("/place/search", accept(APPLICATION_JSON), placeHandler::search)
-            .GET("/place/search/keyword/rank", accept(APPLICATION_JSON), placeHandler::searchKeywordRank))
+            .GET("/place", accept(APPLICATION_JSON), placeHandler::search)
+            .GET("/place/search-keywords", accept(APPLICATION_JSON), placeHandler::searchKeywords))
         .build();
   }
 

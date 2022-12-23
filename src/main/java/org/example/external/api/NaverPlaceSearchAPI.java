@@ -35,7 +35,7 @@ public class NaverPlaceSearchAPI {
   private boolean dryRun = false;
   @Value("${spring.profiles.active}")
   private String activeProfile;
-  @Value("${external.services.naver.search-keyword-api-endpoint}")
+  @Value("${external.services.naver.api-endpoint}")
   private String baseUrl;
 
   @Value("${external.services.naver.x-naver-client-id}")
@@ -62,7 +62,7 @@ public class NaverPlaceSearchAPI {
     return webClient.get()
         .uri(baseUrl, uriBuilder -> uriBuilder
             .path("/v1/search/local.json")
-            .queryParam("query", URLEncoder.encode(query, StandardCharsets.UTF_8))
+            .queryParam("query", query)
             .queryParam("start", 1)
             .queryParam("display", 10)
             .queryParam("sort", "random")

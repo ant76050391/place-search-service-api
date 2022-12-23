@@ -52,8 +52,8 @@ public class RedisConfig {
   }
 
   @Bean(name = "redisTemplate")
-  public ReactiveRedisTemplate<String, Object> reactiveCommonRedisOperations(@Qualifier("lettuceConnectionFactory") ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
-    log.info("{} connectionFactory {} ", "npa_common", reactiveRedisConnectionFactory);
+  public ReactiveRedisTemplate<String, Object> reactiveRedisOperations(@Qualifier("lettuceConnectionFactory") ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
+    log.info("{} connectionFactory {} ", "redis", reactiveRedisConnectionFactory);
 
     RedisSerializationContext<String, Object> serializationContext =
         RedisSerializationContext.<String, Object>newSerializationContext(new StringRedisSerializer())
