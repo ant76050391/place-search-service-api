@@ -1,0 +1,124 @@
+spring:
+  profiles:
+    active: local
+  messages:
+    basename: messages/message
+  application:
+    name: place-search-service-api
+  main:
+    allow-circular-references: false #순환참조 허용 여부. 순환 참조가 되는 순간 설계가 잘 못 된거니 디버깅 용도로만 쓰자
+  output:
+    ansi:
+      enabled: always
+  codec:
+    max-in-memory-size: 16MB
+  cache:
+    type: none
+  autoconfigure:
+    exclude: #다중 레디스를 운영 할 수 있으므로 해당 기능은 꺼두도록 하자.
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+logging:
+  dir: ./logs/${spring.application.name}
+
+log:
+  trace:
+    file:
+      name: trace
+      path: ${logging.dir}
+  business:
+    file:
+      name: business
+      path: ${logging.dir}
+
+springdoc:
+  cache:
+    disabled: true
+  swagger-ui:
+    path: /api-docs
+    display-request-duration: true
+    groups-order: ASC
+    supported-submit-methods:
+      - "get"
+      - "put"
+      - "post"
+      - "delete"
+      - "options"
+      - "head"
+      - "patch"
+      - "trace"
+    operations-sorter: alpha
+  api-docs:
+    groups:
+      enabled: true
+
+api-docs-security:
+  user: open
+  password: sesame!
+
+application-name: "place-search-service-api"
+
+server:
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: never
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml,application/vnd.hal+json
+    min-response-size: 2KB
+  forward-headers-strategy: native
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+place:
+  redis:
+    endpoint: 127.0.0.1
+    port: 6379
+
+external:
+  services:
+    kakao:
+      search-keyword-api-endpoint: https://dapi.kakao.com/v2/local/search/keyword.json
+      authorization: KakaoAK d5d67031cf4ef994c4436b72aa97723e
+    naver:
+      search-keyword-api-endpoint: https://openapi.naver.com/v1/search/local.json
+      x-naver-client-id: 2NDO9UkEvTIky4dXWWhP
+      x-naver-client-secret: PMXXzmD6Kf
+---
+spring:
+  config:
+    activate:
+      on-profile: alpha
+
+---
+spring:
+  config:
+    activate:
+      on-profile: load
+
+---
+spring:
+  config:
+    activate:
+      on-profile: qa
+
+---
+spring:
+  config:
+    activate:
+      on-profile: pre
+
+---
+spring:
+  config:
+    activate:
+      on-profile: live
+
+---

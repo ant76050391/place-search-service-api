@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="env" source="env" defaultValue="LOCAL"/>
+    <springProperty name="level" source="logging.level" defaultValue="INFO"/>
+
+    <springProperty name="BUSINESS_LOG_FILE_PATH" source="log.business.file.path" defaultValue="."/>
+    <springProperty name="BUSINESS_LOG_FILE_NAME" source="log.business.file.name" defaultValue="business"/>
+
+    <springProperty name="TRACE_LOG_FILE_PATH" source="log.trace.file.path" defaultValue="."/>
+    <springProperty name="TRACE_LOG_FILE_NAME" source="log.trace.file.name" defaultValue="trace"/>
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <appender name="JSON_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${BUSINESS_LOG_FILE_PATH}/${BUSINESS_LOG_FILE_NAME}.log</file>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "service": "${springAppName:-}",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentSpanId:-}",
+                        "thread": "%thread",
+                        "class": "%logger{40}",
+                        <!--"request": "%X{request:-}",-->
+                        "log": "%message",
+                        "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}"
+                        }
+                    </pattern>
+                </pattern>
+                <logstashMarkers/>
+                <stackTrace>
+                    <fieldName>stacktrace</fieldName>
+                    <throwableConverter class="net.logstash.logback.stacktrace.ShortenedThrowableConverter">
+                        <maxDepthPerThrowable>30</maxDepthPerThrowable>
+                        <maxLength>2048</maxLength>
+                        <shortenedClassNameLength>20</shortenedClassNameLength>
+                        <rootCauseFirst>true</rootCauseFirst>
+                    </throwableConverter>
+                </stackTrace>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${BUSINESS_LOG_FILE_PATH}/${BUSINESS_LOG_FILE_NAME}_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+
+    <appender name="TRACE_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${TRACE_LOG_FILE_PATH}/${TRACE_LOG_FILE_NAME}.log</file>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "service": "${springAppName:-}",
+                        "trace": "%X{X-B3-TraceId:-}",
+                        "span": "%X{X-B3-SpanId:-}",
+                        "parent": "%X{X-B3-ParentSpanId:-}",
+                        "thread": "%thread",
+                        "class": "%logger{40}",
+                        <!-- "request": "%X{request:-}",-->
+                        "log": "%message",
+                        "timestamp": "%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z'}"
+                        }
+                    </pattern>
+                </pattern>
+                <logstashMarkers/>
+                <throwableClassName>
+                    <fieldName>exception</fieldName>
+                </throwableClassName>
+                <throwableRootCauseClassName>
+                    <fieldName>rootException</fieldName>
+                </throwableRootCauseClassName>
+            </providers>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${TRACE_LOG_FILE_PATH}/${TRACE_LOG_FILE_NAME}_%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="org.example.filter.log.LogFilter" level="TRACE" additivity="false">
+        <appender-ref ref="TRACE_LOG"/>
+    </logger>
+
+    <root level="${level}">
+        <springProfile name="local">
+            <appender-ref ref="CONSOLE"/>
+        </springProfile>
+        <appender-ref ref="JSON_FILE"/>
+    </root>
+</configuration>
