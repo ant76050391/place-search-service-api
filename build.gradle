@@ -36,7 +36,6 @@ dependencies {
     testImplementation 'io.projectreactor:reactor-test'
     implementation 'joda-time:joda-time:2.12.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-joda:2.14.0'
-    implementation 'net.sf.json-lib:json-lib:2.4:jdk15'
     implementation 'org.apache.commons:commons-pool2:2.11.1'
     implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation 'commons-io:commons-io:2.11.0'
@@ -62,6 +61,7 @@ dependencies {
     implementation 'io.projectreactor.tools:blockhound:1.0.6.RELEASE'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+    implementation 'info.debatty:java-string-similarity:2.0.0'
 }
 
 dependencyManagement {

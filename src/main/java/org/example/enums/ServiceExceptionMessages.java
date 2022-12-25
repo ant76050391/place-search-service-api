@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum ServiceExceptionMessages {
-
   // NOTE : 5XX
   SERVER_CACHING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_CACHING_ERROR"),
   SERVER_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_UNKNOWN_ERROR"),
@@ -49,5 +48,4 @@ public enum ServiceExceptionMessages {
   public String getStatusCode() {
     return String.valueOf(this.code.value());
   }
-
 }

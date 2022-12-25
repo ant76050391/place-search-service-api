@@ -14,7 +14,6 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 @Configuration
 public class ObjectMapperConfig {
-
   /**
    * 활성화 된 것들 :
    * ACCEPT_CASE_INSENSITIVE_PROPERTIES : 대소문자 구분
@@ -54,5 +53,4 @@ public class ObjectMapperConfig {
     return new Jackson2ObjectMapperBuilder()
         .modulesToInstall(new JavaTimeModule()).build();
   }
-
 }

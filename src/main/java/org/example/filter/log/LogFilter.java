@@ -46,6 +46,7 @@ public class LogFilter implements WebFilter {
 
     Map<String, Object> logField = new HashMap<>();
     logField.put("path", bodyCaptureExchange.getRequest().getURI().getPath());
+    logField.put("query", bodyCaptureExchange.getRequest().getURI().getQuery());
     logField.put("clientIP", bodyCaptureExchange.getRequest().getHeaders().get("clientIP"));
     logField.put("method", bodyCaptureExchange.getRequest().getMethod());
     logField.put("releaseVersion", branch);

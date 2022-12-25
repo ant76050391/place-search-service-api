@@ -1,4 +1,4 @@
-package org.example.dto;
+package org.example.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,12 +15,6 @@ import org.springframework.boot.context.properties.ConstructorBinding;
 @ConstructorBinding
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Places {
-  private String categoryName;
-  private String placeName;
-  private String addressName;
-  private String roadAddressName;
-  private String phone;
-  private String placeUrl;
-  private String source;
+public class SearchKeyword {
+  private String query;
 }

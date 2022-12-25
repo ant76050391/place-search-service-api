@@ -5,7 +5,6 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.example.cache.ReactorCacheable;
 import org.example.dto.PlaceSearchAPIResponse;
 import org.example.enums.ServiceExceptionMessages;
 import org.example.exception.ExternalAPIException;
@@ -20,9 +19,8 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import javax.annotation.PostConstruct;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
@@ -49,7 +47,7 @@ public class KakaoPlaceSearchAPI {
     log.info("+ KakaoPlaceSearchAPI(baseURL={}, authorization={}, dryRun={})", baseUrl, authorization, dryRun);
   }
 
-  @CircuitBreaker(name="externalAPI", fallbackMethod = "fallback")
+  @CircuitBreaker(name = "externalAPI", fallbackMethod = "fallback")
   public Mono<PlaceSearchAPIResponse> call(String query) {
     if (dryRun) {
       log.warn("Kakao '/v2/local/search/keyword.json' API is set to dry run mode.");
@@ -67,6 +65,11 @@ public class KakaoPlaceSearchAPI {
         .onStatus(HttpStatus::is4xxClientError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
         .onStatus(HttpStatus::is5xxServerError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
         .bodyToMono(PlaceSearchAPIResponse.class)
+        .map(placeSearchAPIResponse -> placeSearchAPIResponse.getDocuments()
+            .stream()
+            .peek(documents -> documents.setSource("kakao"))
+            .collect(Collectors.toList()))
+        .map(documents -> PlaceSearchAPIResponse.builder().documents(documents).build())
         .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).jitter(0d))
         .onErrorResume(e -> {
           log.error("Kakao '/v2/local/search/keyword.json' API ERROR , e : " + e.getMessage());

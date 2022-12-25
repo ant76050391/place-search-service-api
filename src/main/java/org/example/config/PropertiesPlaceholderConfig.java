@@ -7,7 +7,6 @@ import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 public class PropertiesPlaceholderConfig {
-
   @Bean
   public static PropertySourcesPlaceholderConfigurer gitPropertiesPlaceholderConfigurer() {
     PropertySourcesPlaceholderConfigurer propsConfig = new PropertySourcesPlaceholderConfigurer();

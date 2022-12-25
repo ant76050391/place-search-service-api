@@ -20,5 +20,5 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceSearchAPIResponse {
   @JsonAlias({"documents", "items"})
-  List<Documents> documents;
+  private List<Documents> documents;
 }

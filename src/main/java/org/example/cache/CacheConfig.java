@@ -40,7 +40,7 @@ public class CacheConfig {
 	@Getter
 	@NoArgsConstructor
 	public enum Caches {
-		PLACE_SEARCH_KEYWORD_RANK("placeSearchKeywordRank", 60);
+		SEARCH_KEYWORDS("getSearchKeywords", 30);
 
 		private String name;
 		private int expireAfterWrite = DEFAULT_EXPIRE_AFTER_WRITE;

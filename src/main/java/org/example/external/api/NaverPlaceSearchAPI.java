@@ -5,7 +5,6 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.example.cache.ReactorCacheable;
 import org.example.dto.PlaceSearchAPIResponse;
 import org.example.enums.ServiceExceptionMessages;
 import org.example.exception.ExternalAPIException;
@@ -21,9 +20,8 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
 import javax.annotation.PostConstruct;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.stream.Collectors;
 
 @Slf4j
 @ToString
@@ -76,6 +74,11 @@ public class NaverPlaceSearchAPI {
         .onStatus(HttpStatus::is4xxClientError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
         .onStatus(HttpStatus::is5xxServerError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
         .bodyToMono(PlaceSearchAPIResponse.class)
+        .map(placeSearchAPIResponse -> placeSearchAPIResponse.getDocuments()
+            .stream()
+            .peek(documents -> documents.setSource("naver"))
+            .collect(Collectors.toList()))
+        .map(documents -> PlaceSearchAPIResponse.builder().documents(documents).build())
         .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).jitter(0d))
         .onErrorResume(e -> {
           log.error("Naver '/v1/search/local.json' API ERROR , e : " + e.getMessage());

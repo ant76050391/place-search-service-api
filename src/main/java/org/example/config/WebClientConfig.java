@@ -27,7 +27,6 @@ import static io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.Sliding
 @Slf4j
 @Configuration
 public class WebClientConfig {
-
   private static final int BUFFER_MAX_MEMORY_SIZE = 1024 * 1024 * 16;
   @Value("${spring.profiles.active}")
   private String activeProfile;
