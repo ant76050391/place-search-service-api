@@ -8,7 +8,7 @@
 * [System architecture](#system-architecture)
 * [List of open source libraries applied to the application and their purpose](#list-of-open-source-libraries-applied-to-the-application-and-their-purpose)
 * [Implemented technical requirements](#implemented-technical-requirements)
-* [Code format](*)
+* [Code format](#code-format)
 
 ### Feature
 
