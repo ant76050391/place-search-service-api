@@ -182,6 +182,8 @@
 ### Code format 
 * 코드 형식에는 spotless를 사용하였습니다. 
 
-    
+  
     $ ./gradlew spotlessJavaApply
+
+
 
