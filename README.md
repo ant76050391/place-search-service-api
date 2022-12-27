@@ -16,7 +16,7 @@
 * 장소명, 지번 주소, 문자열 유사도 비교 적용
 
 [2] 검색 키워드 목록 조회 API
-* redis 의 sorted set data type 을 이용하여, 검색 키워드와 score 를 저장 및 불러올 수 있도록 구성
+* redis 의 `sorted set` data type 을 이용하여, 검색 키워드와 score 를 저장 및 불러올 수 있도록 구성
 
 ### Getting started 
 
