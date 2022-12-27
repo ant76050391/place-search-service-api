@@ -25,39 +25,28 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-
     implementation 'io.projectreactor.addons:reactor-extra:3.4.8'
     implementation 'io.projectreactor:reactor-tools:3.4.24'
     testImplementation 'io.projectreactor:reactor-test'
-
     implementation 'io.github.resilience4j:resilience4j-spring-boot2'
     implementation 'io.github.resilience4j:resilience4j-reactor'
-
     implementation 'org.springframework.boot:spring-boot-starter-logging'
     implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
-
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine:3.1.2'
-
     implementation 'info.debatty:java-string-similarity:2.0.0'
-
     implementation 'org.modelmapper:modelmapper:3.1.1'
-
     runtimeOnly 'org.projectlombok:lombok'
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testRuntimeOnly 'org.projectlombok:lombok'
     testImplementation 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
-
     implementation 'io.projectreactor.tools:blockhound:1.0.6.RELEASE'
-
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.86.Final:osx-aarch_64'
 }
 
