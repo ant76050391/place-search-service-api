@@ -138,7 +138,7 @@
 | info.debatty:java-string-similarity | 문자열 유사도 비교를 위한 여러가지 알고리즘을 적용한 기능을 제공 하는 라이브러리로서 선택                                                             |
 | org.modelmapper:modelmapper | DTO 간 또는 Entity 간 복잡한 코드 없이 전환 해주는 기능을 제공 하는 라이브러리로서 선택                                                        |
 | org.projectlombok:lombok | Boilerplate code 를 annotation 으로 작성할 수 있는 기능을 제공 하는 라이브러리로서 선택                                                 |
-| io.projectreactor.tools:blockhound | 잘못된 블럭킹 메소드 호출을 찾아주는 기능을 제공 하는 라이브러리로서 선택, 다만 프로덕션에서는 적용 불가, 성능 저하가 의심되는 직접 작성한 코드에 대해 서만 임시적으로 적용하여 디버깅 할 수 있다 |
+| io.projectreactor.tools:blockhound | 잘못된 블럭킹 메소드 호출을 찾아주는 기능을 제공 하는 라이브러리로서 선택, 다만 프로덕션에서는 적용 불가, 성능 저하가 의심되는 직접 작성한 코드에 대해 서만 임시적으로 적용하여 디버깅 할 수 있음 |
 | org.springframework.boot:spring-boot-starter-test | test case 를 구현하기 위한 기능을 제공 하는 라이브러리로서 선택                                                                       |
 | org.junit.jupiter:junit-jupiter-api | test case 를 구현하기 위한 기능을 제공 하는 라이브러리로서 선택                                                                       |
 | org.junit.jupiter:junit-jupiter-engine | test case 를 구현하기 위한 기능을 제공 하는 라이브러리로서 선택                                                                       |
