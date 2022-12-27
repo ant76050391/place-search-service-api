@@ -43,7 +43,7 @@
 
 어플리케이션 동작 여부 확인 :
 
-    curl --location --request GET 'http://localhost:8080/health-check
+    curl --location --request GET 'http://localhost:8080/health-check'
 
 ### Run test
 로직 테스트 (LogicTestCase) :
@@ -52,7 +52,7 @@
 
 장소 검색 API 테스트 :
 
-    curl --location --request GET 'http://localhost:8080/v1/place?query=%EA%B3%B1%EC%B0%BD
+    curl --location --request GET 'http://localhost:8080/v1/place?query=%EA%B3%B1%EC%B0%BD'
 
 
 검색 키워드 목록 조회 API 테스트 :
