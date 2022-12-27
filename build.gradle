@@ -105,13 +105,5 @@ spotless {
 bootRun {
     if (project.hasProperty('jvmArgs')) {
         jvmArgs = (project.jvmArgs.split("\\s+") as List)
-    } else {
-        jvmArgs = ["-Dhealthcheck.filepath=alive.html\n" +
-                           "-Dio.netty.leakDetection.level=advanced\n" +
-                           "-Djava.net.preferIPv4Stack=true\n" +
-                           "-Dreactor.netty.http.server.accessLogEnabled=false\n" +
-                           "-Xms2g\n" +
-                           "-Xmx2g\n" +
-                           "-Dexternal.api.dryRun=false"]
     }
 }

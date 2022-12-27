@@ -34,7 +34,7 @@
 어플리케이션 실행 :
 
 	$ cd ~/{프로젝트 위치}
-	$ ./gradlew bootRun -Dhealthcheck.filepath=alive.html -Dio.netty.leakDetection.level=advanced -Djava.net.preferIPv4Stack=true -Dreactor.netty.http.server.accessLogEnabled=false -Dexternal.api.dryRun=false
+	$ ./gradlew bootRun -PjvmArgs="-Dhealthcheck.filepath=alive.html -Dio.netty.leakDetection.level=advanced -Djava.net.preferIPv4Stack=true -Dreactor.netty.http.server.accessLogEnabled=false -Dexternal.api.dryRun=false"
 
 로그 위치 :
 
@@ -180,4 +180,6 @@
 
     $ ./gradlew spotlessJavaApply
 
-### End 
+### Stop 
+
+    kill -9 $(ps aux | grep "alive.html" | awk '{print $2}')
