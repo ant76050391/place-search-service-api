@@ -46,21 +46,17 @@
     curl --location --request GET 'http://localhost:8080/health-check
 
 ### Run test
-* 로직 테스트 (LogicTestCase) :
-
+로직 테스트 (LogicTestCase) :
 
     $ ./gradlew test
 
-
-* 장소 검색 API 테스트 :
-
+장소 검색 API 테스트 :
 
     curl --location --request GET 'http://localhost:8080/v1/place?query=%EA%B3%B1%EC%B0%BD
 
 
-* 검색 키워드 목록 조회 API 테스트 :
-     
-       
+검색 키워드 목록 조회 API 테스트 :
+    
     curl --location --request GET 'http://localhost:8080/v1/place/search-keywords'
 
 ### How it works
@@ -180,10 +176,8 @@
   * 죄송합니다.
 
 ### Code format 
-* 코드 형식에는 spotless를 사용하였습니다. 
+코드 형식에는 spotless를 사용하였습니다.
 
-  
     $ ./gradlew spotlessJavaApply
-
 
 ### End 
