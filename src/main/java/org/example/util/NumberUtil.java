@@ -10,4 +10,3 @@ public class NumberUtil {
     return Double.parseDouble(df.format(d));
   }
 }
-

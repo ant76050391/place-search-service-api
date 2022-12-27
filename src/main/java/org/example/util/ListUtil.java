@@ -1,12 +1,8 @@
 package org.example.util;
 
-import org.modelmapper.ModelMapper;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import org.modelmapper.ModelMapper;
 
 public class ListUtil {
   private static <T> ArrayList<T> unionBy(List<T> list1, List<T> list2) {
@@ -33,9 +29,9 @@ public class ListUtil {
     return result;
   }
 
-  public static <S, T> List<T> mappingLists(ModelMapper modelMapper, List<S> source, Class<T> targetClass) {
-    return source
-        .stream()
+  public static <S, T> List<T> mappingLists(
+      ModelMapper modelMapper, List<S> source, Class<T> targetClass) {
+    return source.stream()
         .map(element -> modelMapper.map(element, targetClass))
         .collect(Collectors.toList());
   }

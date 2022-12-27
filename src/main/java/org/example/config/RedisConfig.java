@@ -3,6 +3,7 @@ package org.example.config;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
 import io.lettuce.core.SocketOptions;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +19,6 @@ import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-
-import java.time.Duration;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,17 +45,23 @@ public class RedisConfig {
 
   @Primary
   @Bean(name = "lettuceConnectionFactory")
-  public ReactiveRedisConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration lettuceClientConfiguration) {
-    RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(redisProperties.getEndpoint(), redisProperties.getPort());
+  public ReactiveRedisConnectionFactory lettuceConnectionFactory(
+      @Qualifier("lettuceClientConfiguration")
+          LettuceClientConfiguration lettuceClientConfiguration) {
+    RedisStandaloneConfiguration redisStandaloneConfiguration =
+        new RedisStandaloneConfiguration(redisProperties.getEndpoint(), redisProperties.getPort());
     return new LettuceConnectionFactory(redisStandaloneConfiguration, lettuceClientConfiguration);
   }
 
   @Bean(name = "redisTemplate")
-  public ReactiveRedisTemplate<String, Object> reactiveRedisOperations(@Qualifier("lettuceConnectionFactory") ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
+  public ReactiveRedisTemplate<String, Object> reactiveRedisOperations(
+      @Qualifier("lettuceConnectionFactory")
+          ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
     log.info("{} connectionFactory {} ", "redis", reactiveRedisConnectionFactory);
 
     RedisSerializationContext<String, Object> serializationContext =
-        RedisSerializationContext.<String, Object>newSerializationContext(new StringRedisSerializer())
+        RedisSerializationContext.<String, Object>newSerializationContext(
+                new StringRedisSerializer())
             .key(new StringRedisSerializer())
             .value(new GenericToStringSerializer<>(Object.class))
             .hashKey(new StringRedisSerializer())
@@ -65,5 +70,4 @@ public class RedisConfig {
 
     return new ReactiveRedisTemplate<>(reactiveRedisConnectionFactory, serializationContext);
   }
-
 }

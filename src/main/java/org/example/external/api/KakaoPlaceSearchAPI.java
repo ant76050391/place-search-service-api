@@ -2,9 +2,14 @@ package org.example.external.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.example.dto.Documents;
 import org.example.dto.PlaceSearchAPIResponse;
 import org.example.enums.ServiceExceptionMessages;
 import org.example.exception.ExternalAPIException;
@@ -18,10 +23,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 
-import javax.annotation.PostConstruct;
-import java.time.Duration;
-import java.util.stream.Collectors;
-
 @Slf4j
 @ToString
 @Component
@@ -30,8 +31,10 @@ public class KakaoPlaceSearchAPI {
   private final WebClient webClient;
   private final ObjectMapper webClientObjectMapper;
   private boolean dryRun = false;
+
   @Value("${spring.profiles.active}")
   private String activeProfile;
+
   @Value("${external.services.kakao.api-endpoint}")
   private String baseUrl;
 
@@ -44,7 +47,11 @@ public class KakaoPlaceSearchAPI {
     if (StringUtils.hasText(System.getProperty("external.api.dryRun"))) {
       dryRun = Boolean.parseBoolean(System.getProperty("external.api.dryRun"));
     }
-    log.info("+ KakaoPlaceSearchAPI(baseURL={}, authorization={}, dryRun={})", baseUrl, authorization, dryRun);
+    log.info(
+        "+ KakaoPlaceSearchAPI(baseURL={}, authorization={}, dryRun={})",
+        baseUrl,
+        authorization,
+        dryRun);
   }
 
   @CircuitBreaker(name = "externalAPI", fallbackMethod = "fallback")
@@ -53,32 +60,47 @@ public class KakaoPlaceSearchAPI {
       log.warn("Kakao '/v2/local/search/keyword.json' API is set to dry run mode.");
       return Mono.just(new PlaceSearchAPIResponse());
     }
-    return webClient.get()
-        .uri(baseUrl, uriBuilder -> uriBuilder
-            .path("/v2/local/search/keyword.json")
-            .queryParam("query", query)
-            .queryParam("page", 1)
-            .queryParam("size", 10)
-            .build())
+    return webClient
+        .get()
+        .uri(
+            baseUrl,
+            uriBuilder ->
+                uriBuilder
+                    .path("/v2/local/search/keyword.json")
+                    .queryParam("query", query)
+                    .queryParam("page", 1)
+                    .queryParam("size", 10)
+                    .build())
         .headers(httpHeaders -> httpHeaders.set(HttpHeaders.AUTHORIZATION, authorization))
         .retrieve()
-        .onStatus(HttpStatus::is4xxClientError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
-        .onStatus(HttpStatus::is5xxServerError, response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
+        .onStatus(
+            HttpStatus::is4xxClientError,
+            response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
+        .onStatus(
+            HttpStatus::is5xxServerError,
+            response -> response.bodyToMono(String.class).map(ExternalAPIException::new))
         .bodyToMono(PlaceSearchAPIResponse.class)
-        .map(placeSearchAPIResponse -> placeSearchAPIResponse.getDocuments()
-            .stream()
-            .peek(documents -> documents.setSource("kakao"))
-            .collect(Collectors.toList()))
+        .map(
+            placeSearchAPIResponse ->
+                placeSearchAPIResponse.getDocuments().stream()
+                    .peek(documents -> documents.setSource("kakao"))
+                    .collect(Collectors.toList()))
         .map(documents -> PlaceSearchAPIResponse.builder().documents(documents).build())
-        .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).jitter(0d))
-        .onErrorResume(e -> {
-          log.error("Kakao '/v2/local/search/keyword.json' API ERROR , e : " + e.getMessage());
-          return Mono.error(new ServiceException(ServiceExceptionMessages.SERVER_UNKNOWN_ERROR_EXTERNAL_API));
-        });
+        .onErrorResume(
+            e -> {
+              log.error("Kakao '/v2/local/search/keyword.json' API ERROR , e : " + e.getMessage());
+              return Mono.error(
+                  new ServiceException(ServiceExceptionMessages.SERVER_UNKNOWN_ERROR_EXTERNAL_API));
+            })
+        .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).jitter(0d));
   }
 
   public Mono<PlaceSearchAPIResponse> fallback(String key, Throwable t) {
-    log.error("Kakao '/v2/local/search/keyword.json' API Fallback : " + t.getMessage());
-    return Mono.just(new PlaceSearchAPIResponse());
+    log.error(
+        "Kakao '/v2/local/search/keyword.json' API Circuit Breaker Fallback : " + t.getMessage());
+    return Mono.just(
+        PlaceSearchAPIResponse.builder()
+            .documents(Collections.singletonList(Documents.builder().source("kakao").build()))
+            .build());
   }
 }

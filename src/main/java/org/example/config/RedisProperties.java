@@ -1,12 +1,11 @@
 package org.example.config;
 
+import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import javax.annotation.PostConstruct;
 
 @Slf4j
 @ConfigurationProperties(prefix = "place.redis")
@@ -21,5 +20,4 @@ public class RedisProperties {
   public void init() {
     log.info("+ {}", this);
   }
-
 }

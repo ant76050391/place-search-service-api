@@ -1,5 +1,6 @@
 package org.example.filter.log;
 
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -7,8 +8,6 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class BodyCaptureResponse extends ServerHttpResponseDecorator {
@@ -36,5 +35,4 @@ public class BodyCaptureResponse extends ServerHttpResponseDecorator {
   public String getFullBody() {
     return this.body.toString();
   }
-
 }

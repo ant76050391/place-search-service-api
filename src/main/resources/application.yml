@@ -33,31 +33,6 @@ log:
       name: business
       path: ${logging.dir}
 
-springdoc:
-  cache:
-    disabled: true
-  swagger-ui:
-    path: /api-docs
-    display-request-duration: true
-    groups-order: ASC
-    supported-submit-methods:
-      - "get"
-      - "put"
-      - "post"
-      - "delete"
-      - "options"
-      - "head"
-      - "patch"
-      - "trace"
-    operations-sorter: alpha
-  api-docs:
-    groups:
-      enabled: true
-
-api-docs-security:
-  user: open
-  password: sesame!
-
 application-name: "place-search-service-api"
 
 server:

@@ -1,5 +1,7 @@
 package org.example.cache;
 
+import java.util.List;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.Cache;
@@ -11,49 +13,55 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Signal;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class ReactiveCacheManager {
-	private final CacheManager cacheManager;
+  private final CacheManager cacheManager;
 
-	@SuppressWarnings("deprecation") // CacheMono 의 다른 대안이 나올때까진 써야 되므로 deprecation 에선 제외하자.
-	public <T> Mono<T> findCachedMono(String cacheName, Object key, Supplier<Mono<T>> retriever, Class<T> classType) {
-		Cache cache = cacheManager.getCache(cacheName);
+  @SuppressWarnings("deprecation") // CacheMono 의 다른 대안이 나올때까진 써야 되므로 deprecation 에선 제외하자.
+  public <T> Mono<T> findCachedMono(
+      String cacheName, Object key, Supplier<Mono<T>> retriever, Class<T> classType) {
+    Cache cache = cacheManager.getCache(cacheName);
 
-		return CacheMono
-				.lookup(k -> {
-					T result = cache.get(k, classType);
-					return Mono.justOrEmpty(result).map(Signal::next);
-				}, key)
-				.onCacheMissResume(Mono.defer(retriever))
-				.andWriteWith((k, signal) -> Mono.fromRunnable(() -> {
-					if (!signal.isOnError()) {
-						cache.put(k, signal.get());
-					}
-				}));
-	}
+    return CacheMono.lookup(
+            k -> {
+              T result = cache.get(k, classType);
+              return Mono.justOrEmpty(result).map(Signal::next);
+            },
+            key)
+        .onCacheMissResume(Mono.defer(retriever))
+        .andWriteWith(
+            (k, signal) ->
+                Mono.fromRunnable(
+                    () -> {
+                      if (!signal.isOnError()) {
+                        cache.put(k, signal.get());
+                      }
+                    }));
+  }
 
-	@SuppressWarnings("deprecation") // CacheFlux 의 다른 대안이 나올때까진 써야 되므로 deprecation 에선 제외하자.
-	public <T> Flux<T> findCachedFlux(String cacheName, Object key, Supplier<Flux<T>> retriever) {
-		Cache cache = cacheManager.getCache(cacheName);
+  @SuppressWarnings("deprecation") // CacheFlux 의 다른 대안이 나올때까진 써야 되므로 deprecation 에선 제외하자.
+  public <T> Flux<T> findCachedFlux(String cacheName, Object key, Supplier<Flux<T>> retriever) {
+    Cache cache = cacheManager.getCache(cacheName);
 
-		return CacheFlux
-				.lookup(k -> {
-					List<T> result = cache.get(k, List.class);
-					return Mono.justOrEmpty(result)
-							.flatMap(list -> Flux.fromIterable(list).materialize().collectList());
-				}, key)
-				.onCacheMissResume(Flux.defer(retriever))
-				.andWriteWith((k, signalList) -> Flux.fromIterable(signalList)
-						.dematerialize()
-						.collectList()
-						.doOnNext(list -> {
-							cache.put(k, list);
-						})
-						.then());
-	}
+    return CacheFlux.lookup(
+            k -> {
+              List<T> result = cache.get(k, List.class);
+              return Mono.justOrEmpty(result)
+                  .flatMap(list -> Flux.fromIterable(list).materialize().collectList());
+            },
+            key)
+        .onCacheMissResume(Flux.defer(retriever))
+        .andWriteWith(
+            (k, signalList) ->
+                Flux.fromIterable(signalList)
+                    .dematerialize()
+                    .collectList()
+                    .doOnNext(
+                        list -> {
+                          cache.put(k, list);
+                        })
+                    .then());
+  }
 }

@@ -1,6 +1,11 @@
 package org.example.filter.log;
 
+import static net.logstash.logback.marker.Markers.appendEntries;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,12 +22,6 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import static net.logstash.logback.marker.Markers.appendEntries;
 
 @Slf4j
 @Component
@@ -52,31 +51,46 @@ public class LogFilter implements WebFilter {
     logField.put("releaseVersion", branch);
     logField.put("requestHeaders", bodyCaptureExchange.getRequest().getHeaders());
 
-    return chain.filter(bodyCaptureExchange)
-        .doOnSuccess(unused -> {
-          logField.put("requestBody", json2Obj(bodyCaptureExchange.getRequest().getFullBody(), Object.class));
-          logField.put("responseBody", json2Obj(bodyCaptureExchange.getResponse().getFullBody(), Object.class));
-          logField.put("httStatusCode", Objects.requireNonNull(bodyCaptureExchange.getResponse().getStatusCode()).value());
-          log.info(appendEntries(logField), "trace log");
-        })
-        .doOnError(throwable -> {
-          logField.put("requestBody", json2Obj(bodyCaptureExchange.getRequest().getFullBody(), Object.class));
-          logField.put("responseBody", json2Obj(throwable.toString(), Object.class));
-          HttpStatus httpStatus = determineHttpStatus(throwable);
-          // NOTE : 실패할 경우 로직에 정의 된 에러 코드로 내려 보내기 위해 상태 코드를 별도로 가져온다.
-          logField.put("httStatusCode", httpStatus.value());
-          log.info(appendEntries(logField), "trace log");
-        });
+    return chain
+        .filter(bodyCaptureExchange)
+        .doOnSuccess(
+            unused -> {
+              logField.put(
+                  "requestBody",
+                  json2Obj(bodyCaptureExchange.getRequest().getFullBody(), Object.class));
+              logField.put(
+                  "responseBody",
+                  json2Obj(bodyCaptureExchange.getResponse().getFullBody(), Object.class));
+              logField.put(
+                  "httStatusCode",
+                  Objects.requireNonNull(bodyCaptureExchange.getResponse().getStatusCode())
+                      .value());
+              log.info(appendEntries(logField), "trace log");
+            })
+        .doOnError(
+            throwable -> {
+              logField.put(
+                  "requestBody",
+                  json2Obj(bodyCaptureExchange.getRequest().getFullBody(), Object.class));
+              logField.put("responseBody", json2Obj(throwable.toString(), Object.class));
+              HttpStatus httpStatus = determineHttpStatus(throwable);
+              // NOTE : 실패할 경우 로직에 정의 된 에러 코드로 내려 보내기 위해 상태 코드를 별도로 가져온다.
+              logField.put("httStatusCode", httpStatus.value());
+              log.info(appendEntries(logField), "trace log");
+            });
   }
 
   private HttpStatus determineHttpStatus(Throwable error) {
-    MergedAnnotation<ResponseStatus> responseStatusAnnotation = MergedAnnotations
-        .from(error.getClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(ResponseStatus.class);
+    MergedAnnotation<ResponseStatus> responseStatusAnnotation =
+        MergedAnnotations.from(error.getClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY)
+            .get(ResponseStatus.class);
 
     if (error instanceof ResponseStatusException) {
       return ((ResponseStatusException) error).getStatus();
     }
-    return responseStatusAnnotation.getValue("code", HttpStatus.class).orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+    return responseStatusAnnotation
+        .getValue("code", HttpStatus.class)
+        .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   public <T> T json2Obj(String json, @NonNull Class<T> c) {
@@ -86,9 +100,10 @@ public class LogFilter implements WebFilter {
       }
       return new ObjectMapper().readValue(json, c);
     } catch (Exception e) {
-      log.warn("Since the request/response is not in json format, it is returned as a String object. : {}", e.getMessage());
+      log.warn(
+          "Since the request/response is not in json format, it is returned as a String object. : {}",
+          e.getMessage());
       return (T) json;
     }
   }
-
 }
