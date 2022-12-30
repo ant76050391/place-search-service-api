@@ -110,7 +110,7 @@
   * Database는 낮은 지연율과 reactive programing 을 위해 
     * `Elasticache` (https://aws.amazon.com/ko/elasticache/) 
     * `Memory DB for Redis` (https://aws.amazon.com/ko/memorydb/) 또는 `Dynamo DB` (https://aws.amazon.com/ko/dynamodb/)
-  * 를 선정 하였습니다.
+  * 를 선정 하였습니다. (cluster mode)
   * 요구 사항에 좀 더 정교한 Transaction 이 필요하다면, 아래의 조합을 도입 할 수도 있을 것 같습니다.
     * `Aurora DB for mysql` (https://aws.amazon.com/ko/rds/aurora/)
     * `R2DBC` (https://r2dbc.io/)  
