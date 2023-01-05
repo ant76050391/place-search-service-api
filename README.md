@@ -20,10 +20,11 @@
 
 ### Getting started 
 
-아래 두가지 항목에 대해 사전 설치가 되어 있어야 합니다 :
+아래 항목에 대해 사전 설치가 되어 있어야 합니다 :
 
 * amazon corretto jdk 11 (https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html)
 * docker (https://www.docker.com/products/docker-desktop/)
+* git (https://git-scm.com/download/mac)
 
 검색 키워드를 저장하기 위해 redis in-memory db 준비 :
     
